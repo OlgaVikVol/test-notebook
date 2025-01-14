@@ -1,15 +1,17 @@
-import './JournalItem.css';
+import "./JournalItem.css";
 
-function JournalItem() {
-	return (
-		<>
-			<h2 className="journal-item__header">1</h2>
-			<div className="journal-item__body">
-				<div className="journal-item__date">2</div>
-				<div className="journal-item__text">3</div>
-			</div>
-		</>
-	);
+function JournalItem({ title, post, date }) {
+    const formatedDate = new Intl.DateTimeFormat("ru-RU").format(date);
+
+    return (
+        <>
+            <h2 className="journal-item__header">{title}</h2>
+            <div className="journal-item__body">
+                <div className="journal-item__date">{formatedDate}</div>
+                <div className="journal-item__text">{post}</div>
+            </div>
+        </>
+    );
 }
 
 export default JournalItem;
