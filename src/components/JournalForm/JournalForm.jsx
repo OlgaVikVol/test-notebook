@@ -1,6 +1,7 @@
-import "./JournalForm.css";
+import styles from "./JournalForm.module.css";
 import Button from "../Button/Button";
 import { useState } from "react";
+import cn from "classnames";
 
 function JournalForm({ onSubmit }) {
     const [formValidState, setFormValidState] = useState({
@@ -39,18 +40,56 @@ function JournalForm({ onSubmit }) {
 
     return (
         <>
-            <form className="journal-form" onSubmit={addJournalItem}>
-                <input
-                    type="text"
-                    name="title"
-                    placeholder={
-                        formValidState.title ? "Title..." : "Please add title"
-                    }
-                    className={formValidState.title ? "" : "invalid"}
+            <form className={styles["journal-form"]} onSubmit={addJournalItem}>
+                <div>
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder={
+                            formValidState.title
+                                ? "Title..."
+                                : "Please add title"
+                        }
+                        className={cn(styles["input-title"], {
+                            [styles["invalid"]]: !formValidState.title,
+                        })}
+                    />
+                </div>
+                <div className={styles["form-row"]}>
+                    <label for="date" className={styles["form-label"]}>
+                        <img src="/calendar.svg" alt="calendar" />
+                        <span>Date</span>
+                    </label>
+                    <input
+                        id="date"
+                        type="date"
+                        name="date"
+                        className={`${styles.input} ${
+                            formValidState.date ? "" : styles["invalid"]
+                        }`}
+                    />
+                </div>
+                <div className={styles["form-row"]}>
+                    <label for="tag" className={styles["form-label"]}>
+                        <img src="./folder.svg" alt="tags icon" />
+                        <span>Tags</span>
+                    </label>
+                    <input
+                        id="tag"
+                        type="text"
+                        name="tag"
+                        className={styles.input}
+                    />
+                </div>
+                <textarea
+                    name="text"
+                    id="post"
+                    cols={30}
+                    rows={10}
+                    className={`${styles.input} ${
+                        formValidState.post ? "" : styles["invalid"]
+                    }`}
                 />
-                <input type="date" name="date" />
-                <input type="text" name="tag" />
-                <textarea name="text" id="post" cols={30} rows={10} />
                 <Button text="Save" />
             </form>
         </>

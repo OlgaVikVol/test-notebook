@@ -1,7 +1,10 @@
 import "./JournalItem.css";
 
 function JournalItem({ title, post, date }) {
-    const formatedDate = new Intl.DateTimeFormat("ru-RU").format(date);
+    const formatedDate =
+        date && !isNaN(Date.parse(date))
+            ? new Intl.DateTimeFormat("ru-RU").format(new Date(date))
+            : "Invalid Date";
 
     return (
         <>
