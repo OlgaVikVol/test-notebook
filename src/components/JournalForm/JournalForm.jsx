@@ -1,41 +1,38 @@
 import styles from "./JournalForm.module.css";
 import Button from "../Button/Button";
-import { useState } from "react";
+import { useEffect, useReducer } from "react";
 import cn from "classnames";
+import { formReducer, INITIAL_STATE } from "./JournalForm.state";
 
 function JournalForm({ onSubmit }) {
-    const [formValidState, setFormValidState] = useState({
-        title: true,
-        post: true,
-        date: true,
-    });
+    const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE);
+    const { isValid, isFormReadyToSubmit, values } = formState;
+
+    useEffect(() => {
+        let timerId;
+        if (!isValid.post || !isValid.date || !isValid.title) {
+            timerId = setTimeout(() => {
+                dispatchForm({ type: "RESET_VALIDITY" });
+            }, 2000);
+        }
+
+        return () => {
+            clearTimeout(timerId);
+        };
+    }, [isValid]);
+
+    useEffect(() => {
+        if (isFormReadyToSubmit) {
+            onSubmit(values);
+        }
+    }, [isFormReadyToSubmit]);
+
     const addJournalItem = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const formProps = Object.fromEntries(formData);
-        let isValid = true;
-        if (!formProps.title?.trim().length) {
-            setFormValidState((state) => ({ ...state, title: false }));
-            isValid = false;
-        } else {
-            setFormValidState((state) => ({ ...state, title: true }));
-        }
-        if (!formProps.text?.trim().length) {
-            setFormValidState((state) => ({ ...state, post: false }));
-            isValid = false;
-        } else {
-            setFormValidState((state) => ({ ...state, post: true }));
-        }
-        if (!formProps.date) {
-            setFormValidState((state) => ({ ...state, date: false }));
-            isValid = false;
-        } else {
-            setFormValidState((state) => ({ ...state, date: true }));
-        }
-        if (!isValid) {
-            return;
-        }
-        onSubmit(formProps);
+        console.log("Form Props:", formProps);
+        dispatchForm({ type: "SUBMIT", payload: formProps });
     };
 
     return (
@@ -46,17 +43,15 @@ function JournalForm({ onSubmit }) {
                         type="text"
                         name="title"
                         placeholder={
-                            formValidState.title
-                                ? "Title..."
-                                : "Please add title"
+                            isValid.title ? "Title..." : "Please add title"
                         }
                         className={cn(styles["input-title"], {
-                            [styles["invalid"]]: !formValidState.title,
+                            [styles["invalid"]]: !isValid.title,
                         })}
                     />
                 </div>
                 <div className={styles["form-row"]}>
-                    <label for="date" className={styles["form-label"]}>
+                    <label htmlFor="date" className={styles["form-label"]}>
                         <img src="/calendar.svg" alt="calendar" />
                         <span>Date</span>
                     </label>
@@ -65,12 +60,12 @@ function JournalForm({ onSubmit }) {
                         type="date"
                         name="date"
                         className={`${styles.input} ${
-                            formValidState.date ? "" : styles["invalid"]
+                            isValid.date ? "" : styles["invalid"]
                         }`}
                     />
                 </div>
                 <div className={styles["form-row"]}>
-                    <label for="tag" className={styles["form-label"]}>
+                    <label htmlFor="tag" className={styles["form-label"]}>
                         <img src="./folder.svg" alt="tags icon" />
                         <span>Tags</span>
                     </label>
@@ -87,7 +82,7 @@ function JournalForm({ onSubmit }) {
                     cols={30}
                     rows={10}
                     className={`${styles.input} ${
-                        formValidState.post ? "" : styles["invalid"]
+                        isValid.post ? "" : styles["invalid"]
                     }`}
                 />
                 <Button text="Save" />
