@@ -8,7 +8,8 @@ import JournalList from "./components/JournalList/JournalList";
 import Body from "./layouts/Body/Body";
 import LeftPanel from "./layouts/LeftPanel/LeftPanel";
 import { useLocalStorage } from "./hooks/use-localstorage.hook";
-import { UserContext } from "./context/user.context";
+import { UserContexProvider, UserContext } from "./context/user.context";
+import { useState } from "react";
 
 function mapItems(items) {
     if (!items) {
@@ -48,7 +49,7 @@ function App() {
     };
 
     return (
-        <UserContext.Provider value={{ userId: 1 }}>
+        <UserContexProvider>
             <div className="app">
                 <LeftPanel>
                     <Header />
@@ -73,7 +74,7 @@ function App() {
                     <JournalForm onSubmit={addItem} />
                 </Body>
             </div>
-        </UserContext.Provider>
+        </UserContexProvider>
     );
 }
 
