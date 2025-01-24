@@ -4,6 +4,7 @@ import { useEffect, useReducer, useRef } from "react";
 import cn from "classnames";
 import { formReducer, INITIAL_STATE } from "./JournalForm.state";
 import Input from "../Input/Input";
+import { UserContext } from "../../context/user.context";
 
 function JournalForm({ onSubmit }) {
     const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE);
@@ -61,65 +62,71 @@ function JournalForm({ onSubmit }) {
     };
 
     return (
-        <>
-            <form className={styles["journal-form"]} onSubmit={addJournalItem}>
-                <div>
-                    <Input
-                        type="text"
-                        name="title"
-                        value={values.title}
+        <UserContext.Consumer>
+            {(context) => (
+                <form
+                    className={styles["journal-form"]}
+                    onSubmit={addJournalItem}
+                >
+                    {context.userId}
+                    <div>
+                        <Input
+                            type="text"
+                            name="title"
+                            value={values.title}
+                            onChange={onChange}
+                            ref={titleRef}
+                            placeholder={
+                                isValid.title ? "Title..." : "Please add title"
+                            }
+                            appearance="title"
+                            isValid={!isValid.title}
+                        />
+                    </div>
+                    <div className={styles["form-row"]}>
+                        <label htmlFor="date" className={styles["form-label"]}>
+                            <img src="/calendar.svg" alt="calendar" />
+                            <span>Date</span>
+                        </label>
+                        <Input
+                            id="date"
+                            type="date"
+                            name="date"
+                            value={values.date}
+                            onChange={onChange}
+                            ref={dateRef}
+                            isValid={!isValid.date}
+                        />
+                    </div>
+                    <div className={styles["form-row"]}>
+                        <label htmlFor="tag" className={styles["form-label"]}>
+                            <img src="./folder.svg" alt="tags icon" />
+                            <span>Tags</span>
+                        </label>
+                        <Input
+                            id="tag"
+                            type="text"
+                            name="tag"
+                            value={values.tag}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <textarea
+                        name="post"
+                        id="post"
+                        cols={30}
+                        rows={10}
+                        value={values.post}
                         onChange={onChange}
-                        ref={titleRef}
-                        placeholder={
-                            isValid.title ? "Title..." : "Please add title"
-                        }
-                        appearance="title"
-                        isValid={!isValid.title}
+                        ref={postRef}
+                        className={cn(styles["input"], {
+                            [styles["invalid"]]: !isValid.post,
+                        })}
                     />
-                </div>
-                <div className={styles["form-row"]}>
-                    <label htmlFor="date" className={styles["form-label"]}>
-                        <img src="/calendar.svg" alt="calendar" />
-                        <span>Date</span>
-                    </label>
-                    <Input
-                        id="date"
-                        type="date"
-                        name="date"
-                        value={values.date}
-                        onChange={onChange}
-                        ref={dateRef}
-                        isValid={!isValid.date}
-                    />
-                </div>
-                <div className={styles["form-row"]}>
-                    <label htmlFor="tag" className={styles["form-label"]}>
-                        <img src="./folder.svg" alt="tags icon" />
-                        <span>Tags</span>
-                    </label>
-                    <Input
-                        id="tag"
-                        type="text"
-                        name="tag"
-                        value={values.tag}
-                        onChange={onChange}
-                    />
-                </div>
-                <textarea
-                    name="post"
-                    id="post"
-                    cols={30}
-                    rows={10}
-                    value={values.post}
-                    onChange={onChange}
-                    ref={postRef}
-                    className={cn(styles["input"], {
-                        [styles["invalid"]]: !isValid.post,
-                    })}
-                />
-                <Button text="Save" />
-            </form>
-        </>
+                    <Button text="Save" />
+                </form>
+            )}
+        </UserContext.Consumer>
     );
 }
 

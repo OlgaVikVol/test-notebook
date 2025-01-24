@@ -8,6 +8,7 @@ import JournalList from "./components/JournalList/JournalList";
 import Body from "./layouts/Body/Body";
 import LeftPanel from "./layouts/LeftPanel/LeftPanel";
 import { useLocalStorage } from "./hooks/use-localstorage.hook";
+import { UserContext } from "./context/user.context";
 
 function mapItems(items) {
     if (!items) {
@@ -47,30 +48,32 @@ function App() {
     };
 
     return (
-        <div className="app">
-            <LeftPanel>
-                <Header />
-                <JournalAddButton />
-                <JournalList>
-                    {mapItems(items).length === 0 && <p>No notes yet</p>}
-                    {mapItems(items).length > 0 &&
-                        mapItems(items)
-                            .sort(sortedItems)
-                            .map((el) => (
-                                <CardButton key={el.id}>
-                                    <JournalItem
-                                        title={el.title}
-                                        post={el.text}
-                                        date={el.date}
-                                    />
-                                </CardButton>
-                            ))}
-                </JournalList>
-            </LeftPanel>
-            <Body>
-                <JournalForm onSubmit={addItem} />
-            </Body>
-        </div>
+        <UserContext.Provider value={{ userId: 1 }}>
+            <div className="app">
+                <LeftPanel>
+                    <Header />
+                    <JournalAddButton />
+                    <JournalList>
+                        {mapItems(items).length === 0 && <p>No notes yet</p>}
+                        {mapItems(items).length > 0 &&
+                            mapItems(items)
+                                .sort(sortedItems)
+                                .map((el) => (
+                                    <CardButton key={el.id}>
+                                        <JournalItem
+                                            title={el.title}
+                                            post={el.text}
+                                            date={el.date}
+                                        />
+                                    </CardButton>
+                                ))}
+                    </JournalList>
+                </LeftPanel>
+                <Body>
+                    <JournalForm onSubmit={addItem} />
+                </Body>
+            </div>
+        </UserContext.Provider>
     );
 }
 
