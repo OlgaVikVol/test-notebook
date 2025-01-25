@@ -7,6 +7,7 @@ import Body from "./layouts/Body/Body";
 import LeftPanel from "./layouts/LeftPanel/LeftPanel";
 import { useLocalStorage } from "./hooks/use-localstorage.hook";
 import { UserContextProvider } from "./context/user.context";
+import { useState } from "react";
 
 function mapItems(items) {
     if (!items) {
@@ -20,20 +21,34 @@ function mapItems(items) {
 
 function App() {
     const [items, setItems] = useLocalStorage("data");
+    const [selectedItem, setSelectedItem] = useState({});
 
     const addItem = (item) => {
-        const currentItems = Array.isArray(items) ? mapItems(items) : [];
-        setItems([
-            ...currentItems,
-            {
-                ...item,
-                date: new Date(item.date),
-                id:
-                    currentItems.length > 0
-                        ? Math.max(...currentItems.map((i) => i.id)) + 1
-                        : 0,
-            },
-        ]);
+        if (!item.id) {
+            const currentItems = Array.isArray(items) ? mapItems(items) : [];
+            setItems([
+                ...currentItems,
+                {
+                    ...item,
+                    date: new Date(item.date),
+                    id:
+                        currentItems.length > 0
+                            ? Math.max(...currentItems.map((i) => i.id)) + 1
+                            : 1,
+                },
+            ]);
+        } else {
+            setItems([
+                ...mapItems(items).map((i) => {
+                    if (i.id === item.id) {
+                        return {
+                            ...item,
+                        };
+                    }
+                    return i;
+                }),
+            ]);
+        }
     };
 
     return (
@@ -42,10 +57,10 @@ function App() {
                 <LeftPanel>
                     <Header />
                     <JournalAddButton />
-                    <JournalList items={items} />
+                    <JournalList items={items} setItem={setSelectedItem} />
                 </LeftPanel>
                 <Body>
-                    <JournalForm onSubmit={addItem} />
+                    <JournalForm onSubmit={addItem} data={selectedItem} />
                 </Body>
             </div>
         </UserContextProvider>

@@ -3,7 +3,7 @@ import "./JournalItem.css";
 function JournalItem({ title, post, date }) {
     const formatedDate =
         date && !isNaN(Date.parse(date))
-            ? new Intl.DateTimeFormat("ru-RU").format(new Date(date))
+            ? new Intl.DateTimeFormat("en-US").format(new Date(date))
             : "Invalid Date";
 
     return (

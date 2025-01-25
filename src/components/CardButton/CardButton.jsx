@@ -1,8 +1,12 @@
 import styles from "./CardButton.module.css";
 
-function CardButton({ children, className }) {
+function CardButton({ children, className, ...props }) {
     const cl = `${styles["card-button"]} ${className || ""}`.trim();
-    return <button className={cl}>{children}</button>;
+    return (
+        <button {...props} className={cl}>
+            {children}
+        </button>
+    );
 }
 
 export default CardButton;
