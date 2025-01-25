@@ -125,7 +125,7 @@ function JournalForm({ onSubmit }) {
                     [styles["invalid"]]: !isValid.post,
                 })}
             />
-            <Button text="Save" />
+            <Button>Save</Button>
         </form>
     );
 }
